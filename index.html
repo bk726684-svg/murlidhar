@@ -3,92 +3,2297 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Download - Murlidhar Icecream Website</title>
+    <title>Murlidhar Icecream - Premium Ice Cream Shop</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* ==================== CSS Variables ==================== */
+        :root {
+            --primary-pink: #FF6B6B;
+            --dark-slate: #2D3436;
+            --light-pink: #FFE5E5;
+            --white: #FFFFFF;
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success: #00b894;
+            --warning: #fdcb6e;
+            --danger: #d63031;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            color: var(--dark-slate);
+            overflow-x: hidden;
+        }
+
+        /* ==================== Toast Notifications ==================== */
+        #toastContainer {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            min-width: 280px;
+            max-width: 360px;
+            animation: toastIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+            border-left: 4px solid var(--success);
+            pointer-events: all;
+            font-size: 0.92rem;
+            font-weight: 500;
+        }
+
+        .toast.error { border-left-color: var(--danger); }
+        .toast.warning { border-left-color: var(--warning); }
+        .toast.info { border-left-color: #0984e3; }
+
+        .toast-icon { font-size: 1.3rem; }
+        .toast-msg { flex: 1; }
+
+        .toast.hide {
+            animation: toastOut 0.3s ease forwards;
+        }
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateX(100px) scale(0.8); }
+            to { opacity: 1; transform: translateX(0) scale(1); }
+        }
+
+        @keyframes toastOut {
+            from { opacity: 1; transform: translateX(0) scale(1); }
+            to { opacity: 0; transform: translateX(100px) scale(0.8); }
+        }
+
+        /* ==================== Navbar ==================== */
+        .navbar {
+            position: sticky;
+            top: 0;
+            background: rgba(255,255,255,0.97);
+            backdrop-filter: blur(10px);
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            gap: 0.5rem;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-pink);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            white-space: nowrap;
+        }
+
+        .shop-status {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.82rem;
+            white-space: nowrap;
+        }
+
+        .shop-status.open { background: rgba(0,184,148,0.1); color: var(--success); }
+        .shop-status.closed { background: rgba(214,48,49,0.1); color: var(--danger); }
+
+        .status-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .open .status-dot { background: var(--success); }
+        .closed .status-dot { background: var(--danger); }
+
+        @keyframes pulse {
+            0%,100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.55rem 1.1rem;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        .btn-primary { background: var(--primary-pink); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,107,107,0.4); }
+        .btn-admin { background: var(--dark-slate); color: white; }
+        .btn-admin:hover { background: #1a1d1f; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-success { background: var(--success); color: white; }
+
+        /* ==================== Offers Banner ==================== */
+        .offers-ticker {
+            background: linear-gradient(90deg, #FF6B6B, #764ba2, #667eea, #FF6B6B);
+            background-size: 300% 100%;
+            animation: gradientShift 4s linear infinite;
+            color: white;
+            padding: 0.5rem 0;
+            overflow: hidden;
+            font-size: 0.88rem;
+            font-weight: 600;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 300% 50%; }
+        }
+
+        .ticker-inner {
+            display: inline-block;
+            white-space: nowrap;
+            animation: ticker 22s linear infinite;
+        }
+
+        @keyframes ticker {
+            0% { transform: translateX(100vw); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* ==================== Hero ==================== */
+        .hero {
+            background: var(--gradient);
+            padding: 3.5rem 1.5rem 2rem;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 300px; height: 300px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+            top: -80px; right: -80px;
+        }
+
+        .hero h1 {
+            font-size: 2.6rem;
+            margin-bottom: 0.7rem;
+            animation: slideDown 0.8s ease;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            animation: slideUp 0.8s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Business Hours Badge */
+        .business-hours-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.4);
+            padding: 0.5rem 1.2rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            backdrop-filter: blur(5px);
+            animation: slideUp 0.9s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ==================== Stats Bar ==================== */
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            padding: 1.2rem 1.5rem;
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(5px);
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .stat-item {
+            color: white;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.78rem;
+            opacity: 0.85;
+        }
+
+        /* ==================== Container ==================== */
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        /* ==================== Offers Section ==================== */
+        .offers-section {
+            margin-bottom: 2rem;
+        }
+
+        .offers-section h2 {
+            color: white;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .offers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+
+        .offer-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.2rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .offer-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: var(--gradient);
+        }
+
+        .offer-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-pink);
+        }
+
+        .offer-emoji { font-size: 2rem; margin-bottom: 0.5rem; }
+        .offer-title { font-weight: 700; color: var(--primary-pink); font-size: 1rem; }
+        .offer-desc { font-size: 0.82rem; color: #666; margin-top: 0.3rem; }
+        .offer-code {
+            margin-top: 0.7rem;
+            background: var(--light-pink);
+            color: var(--primary-pink);
+            border: 2px dashed var(--primary-pink);
+            padding: 0.3rem 0.8rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            display: inline-block;
+        }
+
+        /* ==================== Search & Filters ==================== */
+        .search-filter-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 0.9rem 1.5rem;
+            border: 2px solid var(--glass-border);
+            border-radius: 50px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            margin-bottom: 1.2rem;
+            background: white;
+            transition: border-color 0.3s;
+        }
+
+        .search-bar:focus { outline: none; border-color: var(--primary-pink); }
+
+        .category-filters {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            padding: 0.6rem 1.3rem;
+            border: 2px solid white;
+            background: transparent;
+            color: white;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn.active { background: white; color: var(--primary-pink); }
+        .filter-btn:hover { transform: translateY(-2px); }
+
+        /* ==================== Products Grid ==================== */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.35s ease;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 18px 45px rgba(31,38,135,0.3);
+        }
+
+        .product-image-wrap {
+            position: relative;
+            overflow: hidden;
+            height: 200px;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+            loading: lazy;
+        }
+
+        .product-card:hover .product-image { transform: scale(1.08); }
+
+        .bestseller-badge {
+            position: absolute;
+            top: 10px; right: 10px;
+            background: var(--warning);
+            color: #333;
+            padding: 0.3rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .sold-out-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.65);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0;
+            color: white;
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 1px;
         }
-        .card {
+
+        /* Rating Stars */
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stars { color: #fdcb6e; font-size: 0.9rem; }
+        .rating-count { font-size: 0.78rem; color: #999; }
+
+        .product-info { padding: 1.3rem; }
+
+        .product-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            color: var(--dark-slate);
+        }
+
+        .product-price {
+            font-size: 1.3rem;
+            color: var(--primary-pink);
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+        }
+
+        /* Quantity + Add to Cart on Card */
+        .card-bottom {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .card-qty-control {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: var(--light-pink);
+            border-radius: 25px;
+            padding: 0.3rem 0.6rem;
+        }
+
+        .card-qty-btn {
+            width: 26px; height: 26px;
+            border: none;
+            background: var(--primary-pink);
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1rem;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .card-qty-btn:hover { background: #ff5252; }
+
+        .card-qty-display {
+            font-weight: 700;
+            min-width: 22px;
+            text-align: center;
+            color: var(--primary-pink);
+            font-size: 1rem;
+        }
+
+        .add-to-cart-btn {
+            flex: 1;
+            padding: 0.7rem;
+            background: var(--primary-pink);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .add-to-cart-btn:hover { background: #ff5252; }
+        .add-to-cart-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+        /* ==================== Floating Cart ==================== */
+        .floating-cart {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            background: var(--primary-pink);
+            color: white;
+            width: 58px; height: 58px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(255,107,107,0.45);
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .floating-cart:hover { transform: scale(1.12); }
+
+        .floating-cart.bounce {
+            animation: cartBounce 0.5s cubic-bezier(0.175,0.885,0.32,1.275);
+        }
+
+        @keyframes cartBounce {
+            0% { transform: scale(1); }
+            40% { transform: scale(1.3); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px; right: -5px;
+            background: var(--dark-slate);
+            color: white;
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        /* ==================== Modal ==================== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active { display: flex; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
             background: white;
             border-radius: 20px;
-            padding: 3rem 2.5rem;
-            text-align: center;
-            max-width: 420px;
-            width: 90%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            max-width: 500px;
+            width: 100%;
+            max-height: 92vh;
+            overflow-y: auto;
+            animation: slideUpModal 0.4s ease;
         }
-        .icon { font-size: 4rem; margin-bottom: 1rem; }
-        h1 { color: #2D3436; font-size: 1.5rem; margin-bottom: 0.5rem; }
-        p { color: #666; margin-bottom: 2rem; font-size: 0.95rem; line-height: 1.6; }
-        .btn-download {
-            display: inline-block;
-            background: #FF6B6B;
+
+        @keyframes slideUpModal {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            padding: 1.3rem 1.5rem;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 1;
+        }
+
+        .modal-header h2 { color: var(--primary-pink); }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--dark-slate);
+            width: 34px; height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .close-modal:hover { background: #f0f0f0; }
+
+        .modal-body { padding: 1.3rem 1.5rem; }
+
+        /* ==================== Cart Items ==================== */
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.9rem 0;
+            border-bottom: 1px solid #f5f5f5;
+            gap: 0.8rem;
+        }
+
+        .cart-item-info { flex: 1; }
+        .cart-item-name { font-weight: 600; margin-bottom: 0.2rem; font-size: 0.95rem; }
+        .cart-item-price { color: var(--primary-pink); font-weight: 600; font-size: 0.9rem; }
+
+        .cart-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .qty-btn {
+            width: 28px; height: 28px;
+            border: none;
+            background: var(--primary-pink);
             color: white;
-            padding: 1rem 2.5rem;
-            border-radius: 50px;
-            text-decoration: none;
+            border-radius: 50%;
+            cursor: pointer;
             font-weight: 700;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qty-display { font-weight: 700; min-width: 28px; text-align: center; }
+
+        .remove-item {
+            background: none;
+            color: var(--danger);
+            border: none;
+            cursor: pointer;
             font-size: 1.1rem;
+            padding: 0.2rem;
+            transition: transform 0.2s;
+        }
+
+        .remove-item:hover { transform: scale(1.2); }
+
+        /* ==================== Coupon Section ==================== */
+        .coupon-section {
+            margin: 1rem 0;
+            display: flex;
+            gap: 0.7rem;
+        }
+
+        .coupon-input {
+            flex: 1;
+            padding: 0.7rem 1rem;
+            border: 2px dashed var(--primary-pink);
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary-pink);
+        }
+
+        .coupon-input:focus { outline: none; background: var(--light-pink); }
+
+        .coupon-apply-btn {
+            padding: 0.7rem 1.2rem;
+            background: var(--primary-pink);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
             transition: all 0.3s;
-            box-shadow: 0 5px 20px rgba(255,107,107,0.4);
         }
-        .btn-download:hover {
-            background: #ff5252;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(255,107,107,0.5);
+
+        .coupon-apply-btn:hover { background: #ff5252; }
+
+        .coupon-success {
+            background: rgba(0,184,148,0.1);
+            color: var(--success);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
         }
-        .steps {
-            margin-top: 2rem;
-            background: #f8f9fa;
+
+        /* ==================== Cart Summary ==================== */
+        .cart-summary {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--light-pink);
             border-radius: 12px;
-            padding: 1.2rem;
-            text-align: left;
         }
-        .steps h3 { color: #764ba2; margin-bottom: 0.7rem; font-size: 0.95rem; }
-        .steps ol { padding-left: 1.3rem; color: #555; font-size: 0.88rem; line-height: 1.8; }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .summary-row.discount { color: var(--success); font-weight: 600; }
+
+        .summary-row.total {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--primary-pink);
+            border-top: 2px solid var(--primary-pink);
+            padding-top: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .warning-text {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        /* ==================== Checkout Form ==================== */
+        .checkout-form { margin-top: 1.3rem; }
+
+        .form-group { margin-bottom: 1rem; }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+            color: var(--dark-slate);
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus { outline: none; border-color: var(--primary-pink); }
+
+        .whatsapp-btn {
+            width: 100%;
+            padding: 1rem;
+            background: #25D366;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            margin-top: 1rem;
+        }
+
+        .whatsapp-btn:hover { background: #1fb855; transform: translateY(-2px); }
+
+        .shop-closed-checkout {
+            background: rgba(214,48,49,0.1);
+            border: 2px solid var(--danger);
+            color: var(--danger);
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        /* ==================== Admin Panel ==================== */
+        .admin-panel {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            min-height: 80vh;
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #f0f0f0;
+            flex-wrap: wrap;
+            overflow-x: auto;
+        }
+
+        .admin-tab {
+            padding: 0.9rem 1.3rem;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--dark-slate);
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            white-space: nowrap;
+            font-size: 0.92rem;
+        }
+
+        .admin-tab.active { color: var(--primary-pink); border-bottom-color: var(--primary-pink); }
+
+        .admin-content { display: none; }
+        .admin-content.active { display: block; }
+
+        .admin-form {
+            background: var(--light-pink);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .product-list { display: grid; gap: 1rem; }
+
+        .product-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            transition: box-shadow 0.2s;
+        }
+
+        .product-item:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+
+        .product-item-info { flex: 1; min-width: 200px; }
+
+        .product-item-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-small {
+            padding: 0.45rem 0.9rem;
+            font-size: 0.82rem;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-small:hover { transform: translateY(-1px); }
+        .btn-warning { background: var(--warning); color: var(--dark-slate); }
+
+        /* ==================== Orders ==================== */
+        .orders-filter {
+            display: flex;
+            gap: 0.7rem;
+            margin-bottom: 1.2rem;
+            flex-wrap: wrap;
+        }
+
+        .orders-search {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.7rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .orders-search:focus { outline: none; border-color: var(--primary-pink); }
+
+        .orders-filter-select {
+            padding: 0.7rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+        }
+
+        .order-item {
+            background: #f8f9fa;
+            padding: 1.3rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--warning);
+            transition: all 0.2s;
+        }
+
+        .order-item.delivered { border-left-color: var(--success); }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            flex-wrap: wrap;
+            gap: 0.7rem;
+        }
+
+        .order-id {
+            font-weight: 700;
+            color: var(--primary-pink);
+            font-size: 1rem;
+        }
+
+        .order-status {
+            padding: 0.3rem 0.9rem;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .order-status.pending { background: var(--warning); color: #333; }
+        .order-status.delivered { background: var(--success); color: white; }
+
+        /* ==================== Coupons Admin ==================== */
+        .coupon-admin-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.7rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .coupon-code-display {
+            background: var(--light-pink);
+            color: var(--primary-pink);
+            border: 2px dashed var(--primary-pink);
+            padding: 0.3rem 0.8rem;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 1rem;
+            letter-spacing: 1px;
+        }
+
+        /* ==================== Settings ==================== */
+        .settings-section {
+            background: var(--light-pink);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+        }
+
+        .settings-section h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-pink);
+            font-size: 1.05rem;
+        }
+
+        .settings-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 56px; height: 30px;
+        }
+
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 30px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px; width: 22px;
+            left: 4px; bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider { background-color: var(--success); }
+        input:checked + .slider:before { transform: translateX(26px); }
+
+        /* ==================== Business Hours Admin ==================== */
+        .hours-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 0.8rem;
+        }
+
+        .hours-row {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: white;
+            padding: 0.7rem 1rem;
+            border-radius: 10px;
+        }
+
+        .hours-day { font-weight: 600; min-width: 80px; font-size: 0.9rem; }
+
+        .hours-input {
+            padding: 0.4rem 0.7rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.85rem;
+            width: 90px;
+        }
+
+        /* ==================== Empty State ==================== */
+        .empty-state { text-align: center; padding: 2.5rem; color: #999; }
+        .empty-state-icon { font-size: 3.5rem; margin-bottom: 0.8rem; }
+
+        /* ==================== Shop Closed Banner ==================== */
+        .shop-closed-message {
+            background: rgba(214,48,49,0.1);
+            color: var(--danger);
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(214,48,49,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        /* ==================== Responsive ==================== */
+        @media (max-width: 768px) {
+            .navbar { padding: 0.7rem 1rem; }
+            .logo { font-size: 1.1rem; }
+            .hero h1 { font-size: 1.8rem; }
+            .hero p { font-size: 0.95rem; }
+            .container { padding: 0 1rem; }
+            .products-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; }
+            .floating-cart { width: 50px; height: 50px; bottom: 20px; right: 20px; font-size: 1.2rem; }
+            .stats-bar { gap: 1rem; padding: 0.8rem 1rem; }
+            .stat-number { font-size: 1.1rem; }
+            .btn { padding: 0.45rem 0.85rem; font-size: 0.8rem; }
+        }
+
+        @media (max-width: 480px) {
+            .products-grid { grid-template-columns: 1fr 1fr; }
+            .nav-actions { gap: 0.4rem; }
+        }
     </style>
 </head>
 <body>
-    <div class="card">
-        <div class="icon">🍦</div>
-        <h1>Murlidhar Icecream Website</h1>
-        <p>Aapki complete ice cream shop website ready hai! Neeche button click karke HTML file download karo.</p>
 
-        <a id="downloadBtn" href="#" download="murlidhar_icecream.html" class="btn-download">
-            ⬇️ Download HTML File
-        </a>
+    <!-- ==================== TOAST CONTAINER ==================== -->
+    <div id="toastContainer"></div>
 
-        <div class="steps">
-            <h3>📋 Download ke baad kya karna hai:</h3>
-            <ol>
-                <li>File download hone ke baad double-click karo</li>
-                <li>Browser mein automatically khul jayegi</li>
-                <li>Website use karna start karo!</li>
-                <li>Admin ke liye "Admin" button click karo</li>
-                <li>Password: <strong>admin123</strong></li>
-            </ol>
+    <!-- ==================== CUSTOMER WEBSITE ==================== -->
+    <div id="customerSite">
+
+        <!-- Offers Ticker -->
+        <div class="offers-ticker">
+            <span class="ticker-inner">
+                🍦 FIRST ORDER 10% OFF: USE CODE <strong>SWEET10</strong> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                ❄️ BUY 2 GET 1 FREE: USE CODE <strong>B2G1FREE</strong> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                🎉 FAMILY PACK SPECIAL - FREE DELIVERY &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                📞 ORDER NOW: +91 82183 77572 &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                ⏰ Open: 10:00 AM – 10:00 PM Daily &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                🍨 Premium Ice Cream - Made Fresh Daily
+            </span>
+        </div>
+
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="logo">🍦 Murlidhar Icecream</div>
+            <div class="shop-status" id="shopStatusBadge">
+                <span class="status-dot"></span>
+                <span id="statusText">Open</span>
+            </div>
+            <div class="nav-actions">
+                <button class="btn btn-primary" onclick="window.location.href='tel:+918218377572'">📞 Call</button>
+                <button class="btn btn-admin" onclick="openAdminLogin()">🔐 Admin</button>
+            </div>
+        </nav>
+
+        <!-- Hero -->
+        <section class="hero">
+            <h1>🍨 Premium Ice Cream Paradise</h1>
+            <p>Made with Fresh Ingredients, Crafted with Love</p>
+            <div class="business-hours-badge" id="businessHoursBadge">
+                ⏰ Open: 10:00 AM – 10:00 PM
+            </div>
+        </section>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-item"><span class="stat-number">50+</span><span class="stat-label">Flavors</span></div>
+            <div class="stat-item"><span class="stat-number">500+</span><span class="stat-label">Happy Customers</span></div>
+            <div class="stat-item"><span class="stat-number">4.8⭐</span><span class="stat-label">Rating</span></div>
+            <div class="stat-item"><span class="stat-number">5 Min</span><span class="stat-label">Avg. Prep Time</span></div>
+        </div>
+
+        <div class="container">
+
+            <!-- Shop Closed Message -->
+            <div id="shopClosedMessage" class="shop-closed-message" style="display:none;">
+                🔒 Shop is currently closed. Please visit us during business hours (10 AM – 10 PM)!
+            </div>
+
+            <!-- Offers Section -->
+            <div class="offers-section">
+                <h2>🎁 Special Offers</h2>
+                <div class="offers-grid" id="offersGrid"></div>
+            </div>
+
+            <!-- Search & Filters -->
+            <div class="search-filter-section">
+                <input type="text" class="search-bar" id="searchBar" placeholder="🔍 Search for your favorite ice cream...">
+                <div class="category-filters">
+                    <button class="filter-btn active" data-category="All">🍦 All</button>
+                    <button class="filter-btn" data-category="Sticks">🍫 Sticks</button>
+                    <button class="filter-btn" data-category="Cones">🍧 Cones</button>
+                    <button class="filter-btn" data-category="Family">👨‍👩‍👧‍👦 Family</button>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="products-grid" id="productsGrid"></div>
+
+        </div>
+
+        <!-- Floating Cart -->
+        <div class="floating-cart" id="floatingCart" onclick="openCart()">
+            🛒
+            <span class="cart-count" id="cartCount">0</span>
+        </div>
+    </div>
+
+    <!-- ==================== CART MODAL ==================== -->
+    <div class="modal" id="cartModal">
+        <div class="modal-content" style="max-width:550px;">
+            <div class="modal-header">
+                <h2>🛒 Your Cart</h2>
+                <button class="close-modal" onclick="closeCart()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div id="cartItems"></div>
+
+                <!-- Coupon -->
+                <div id="couponArea" style="display:none;">
+                    <div id="couponAppliedMsg" style="display:none;" class="coupon-success"></div>
+                    <div class="coupon-section">
+                        <input type="text" class="coupon-input" id="couponInput" placeholder="ENTER COUPON CODE">
+                        <button class="coupon-apply-btn" onclick="applyCoupon()">Apply</button>
+                    </div>
+                </div>
+
+                <div class="cart-summary" id="cartSummary"></div>
+
+                <!-- Checkout or Closed Notice -->
+                <div id="checkoutSection" style="display:none;">
+                    <div id="shopClosedCheckout" class="shop-closed-checkout" style="display:none;">
+                        🔒 Shop is closed. You cannot place orders right now.
+                    </div>
+                    <form class="checkout-form" id="checkoutForm">
+                        <div class="form-group">
+                            <label>👤 Name *</label>
+                            <input type="text" id="customerName" required placeholder="Aapka naam">
+                        </div>
+                        <div class="form-group">
+                            <label>📱 Mobile Number *</label>
+                            <input type="tel" id="customerMobile" required pattern="[0-9]{10}" placeholder="10-digit mobile number">
+                        </div>
+                        <div class="form-group">
+                            <label>🏠 Delivery Address *</label>
+                            <textarea id="customerAddress" rows="3" required placeholder="Ghar ka pura address"></textarea>
+                        </div>
+                        <button type="submit" class="whatsapp-btn">
+                            📱 Order via WhatsApp
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== ADMIN LOGIN MODAL ==================== -->
+    <div class="modal" id="adminLoginModal">
+        <div class="modal-content" style="max-width:400px;">
+            <div class="modal-header">
+                <h2>🔐 Admin Login</h2>
+                <button class="close-modal" onclick="closeAdminLogin()">✕</button>
+            </div>
+            <div class="modal-body">
+                <form id="adminLoginForm">
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="adminPassword" required placeholder="Enter admin password">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%;padding:0.8rem;font-size:1rem;">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== ADMIN PANEL ==================== -->
+    <div id="adminPanel" style="display:none;">
+        <nav class="navbar">
+            <div class="logo">🔧 Admin Panel</div>
+            <div style="font-size:0.85rem;color:#666;">Murlidhar Icecream</div>
+            <button class="btn btn-danger" onclick="logoutAdmin()">Logout</button>
+        </nav>
+
+        <div class="container">
+            <div class="admin-panel">
+
+                <div class="admin-tabs">
+                    <button class="admin-tab active" onclick="showAdminTab('menu', this)">📋 Menu</button>
+                    <button class="admin-tab" onclick="showAdminTab('orders', this)">📦 Orders</button>
+                    <button class="admin-tab" onclick="showAdminTab('coupons', this)">🎟️ Coupons</button>
+                    <button class="admin-tab" onclick="showAdminTab('settings', this)">⚙️ Settings</button>
+                </div>
+
+                <!-- Menu Tab -->
+                <div class="admin-content active" id="menuTab">
+                    <h2 style="margin-bottom:1rem;">Add New Product</h2>
+                    <form class="admin-form" id="addProductForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Product Name *</label>
+                                <input type="text" id="productName" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Price (₹) *</label>
+                                <input type="number" id="productPrice" required min="0">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Category *</label>
+                                <select id="productCategory">
+                                    <option>Sticks</option>
+                                    <option>Cones</option>
+                                    <option>Family</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Rating (1-5) *</label>
+                                <input type="number" id="productRating" required min="1" max="5" step="0.1" value="4.5">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Image URL *</label>
+                            <input type="url" id="productImage" required placeholder="https://example.com/image.jpg">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Product</button>
+                    </form>
+
+                    <h2 style="margin-bottom:1rem;">All Products</h2>
+                    <div class="product-list" id="adminProductList"></div>
+                </div>
+
+                <!-- Orders Tab -->
+                <div class="admin-content" id="ordersTab">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.7rem;">
+                        <h2>Order History</h2>
+                        <div style="font-size:0.9rem;color:#666;">Total Orders: <strong id="totalOrdersCount">0</strong> | Revenue: <strong id="totalRevenue">₹0</strong></div>
+                    </div>
+                    <div class="orders-filter">
+                        <input type="text" class="orders-search" id="orderSearch" placeholder="🔍 Search by name, mobile, order ID..." oninput="loadOrderHistory()">
+                        <select class="orders-filter-select" id="orderStatusFilter" onchange="loadOrderHistory()">
+                            <option value="all">All Orders</option>
+                            <option value="pending">Pending</option>
+                            <option value="delivered">Delivered</option>
+                        </select>
+                    </div>
+                    <div id="ordersList"></div>
+                </div>
+
+                <!-- Coupons Tab -->
+                <div class="admin-content" id="couponsTab">
+                    <h2 style="margin-bottom:1rem;">Coupon Management</h2>
+                    <form class="admin-form" id="addCouponForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Coupon Code *</label>
+                                <input type="text" id="couponCode" required placeholder="e.g. SWEET10" style="text-transform:uppercase;">
+                            </div>
+                            <div class="form-group">
+                                <label>Discount Type *</label>
+                                <select id="couponType">
+                                    <option value="percent">Percentage (%)</option>
+                                    <option value="flat">Flat Amount (₹)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Discount Value *</label>
+                                <input type="number" id="couponValue" required min="1" placeholder="e.g. 10">
+                            </div>
+                            <div class="form-group">
+                                <label>Min Order Amount (₹)</label>
+                                <input type="number" id="couponMinOrder" min="0" value="0" placeholder="0 = no minimum">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Coupon</button>
+                    </form>
+                    <h2 style="margin-bottom:1rem;">Active Coupons</h2>
+                    <div id="couponsList"></div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div class="admin-content" id="settingsTab">
+
+                    <div class="settings-section">
+                        <h3>🏪 Shop Status</h3>
+                        <div class="settings-row">
+                            <div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="shopOpenToggle" onchange="toggleShopStatus()">
+                                    <span class="slider"></span>
+                                </label>
+                                <span id="shopToggleLabel" style="margin-left:1rem;font-weight:600;">Shop is Open</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>⏰ Business Hours</h3>
+                        <div class="hours-grid" id="hoursGrid"></div>
+                        <button class="btn btn-primary" style="margin-top:1rem;" onclick="saveBusinessHours()">Save Hours</button>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>💰 Order Settings</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Minimum Order Amount (₹)</label>
+                                <input type="number" id="minOrderAmount" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label>Delivery Charge (₹)</label>
+                                <input type="number" id="deliveryCharge" min="0">
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="saveOrderSettings()">Save Settings</button>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>🔑 Change Admin Password</h3>
+                        <form id="changePasswordForm">
+                            <div class="form-group">
+                                <label>New Password</label>
+                                <input type="password" id="newPassword" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update Password</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Load the HTML file content and create a blob download link
-        fetch('murlidhar_icecream.html')
-            .then(r => r.text())
-            .then(html => {
-                const blob = new Blob([html], { type: 'text/html' });
-                const url = URL.createObjectURL(blob);
-                document.getElementById('downloadBtn').href = url;
-            })
-            .catch(() => {
-                // Fallback: direct link
-                document.getElementById('downloadBtn').href = 'murlidhar_icecream.html';
+    // ==================== TOAST SYSTEM ====================
+    function showToast(message, type = 'success', duration = 3200) {
+        const container = document.getElementById('toastContainer');
+        const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<span class="toast-icon">${icons[type]}</span><span class="toast-msg">${message}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.classList.add('hide');
+            setTimeout(() => toast.remove(), 350);
+        }, duration);
+    }
+
+    // ==================== DATA LAYER ====================
+    const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+
+    function initializeApp() {
+        if (!localStorage.getItem('settings')) {
+            localStorage.setItem('settings', JSON.stringify({
+                shopOpen: true,
+                adminPassword: 'admin123',
+                minOrderAmount: 200,
+                deliveryCharge: 50,
+                businessHours: {
+                    Monday: { open: '10:00', close: '22:00', enabled: true },
+                    Tuesday: { open: '10:00', close: '22:00', enabled: true },
+                    Wednesday: { open: '10:00', close: '22:00', enabled: true },
+                    Thursday: { open: '10:00', close: '22:00', enabled: true },
+                    Friday: { open: '10:00', close: '22:00', enabled: true },
+                    Saturday: { open: '10:00', close: '22:00', enabled: true },
+                    Sunday: { open: '10:00', close: '22:00', enabled: true }
+                }
+            }));
+        }
+
+        if (!localStorage.getItem('products')) {
+            localStorage.setItem('products', JSON.stringify([
+                { id: 1, name: 'Chocolate Stick', price: 30, category: 'Sticks', image: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400', inStock: true, bestseller: true, rating: 4.8, reviews: 124 },
+                { id: 2, name: 'Vanilla Cone', price: 40, category: 'Cones', image: 'https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=400', inStock: true, bestseller: false, rating: 4.5, reviews: 87 },
+                { id: 3, name: 'Strawberry Stick', price: 35, category: 'Sticks', image: 'https://images.unsplash.com/photo-1501443762994-82bd5dace89a?w=400', inStock: true, bestseller: true, rating: 4.7, reviews: 96 },
+                { id: 4, name: 'Family Pack - Assorted', price: 250, category: 'Family', image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400', inStock: true, bestseller: false, rating: 4.6, reviews: 42 },
+                { id: 5, name: 'Mango Cone', price: 45, category: 'Cones', image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400', inStock: false, bestseller: false, rating: 4.4, reviews: 33 }
+            ]));
+        }
+
+        if (!localStorage.getItem('orders')) localStorage.setItem('orders', JSON.stringify([]));
+        if (!localStorage.getItem('cart')) localStorage.setItem('cart', JSON.stringify([]));
+
+        if (!localStorage.getItem('coupons')) {
+            localStorage.setItem('coupons', JSON.stringify([
+                { code: 'SWEET10', type: 'percent', value: 10, minOrder: 0, active: true },
+                { code: 'B2G1FREE', type: 'percent', value: 33, minOrder: 100, active: true },
+                { code: 'FLAT20', type: 'flat', value: 20, minOrder: 150, active: true }
+            ]));
+        }
+
+        if (!localStorage.getItem('appliedCoupon')) localStorage.setItem('appliedCoupon', JSON.stringify(null));
+
+        loadProducts();
+        updateCartCount();
+        updateShopStatus();
+        renderOffers();
+        updateBusinessHoursDisplay();
+    }
+
+    function getSettings() { return JSON.parse(localStorage.getItem('settings')); }
+    function saveSettings(s) { localStorage.setItem('settings', JSON.stringify(s)); }
+    function getProducts() { return JSON.parse(localStorage.getItem('products')) || []; }
+    function saveProducts(p) { localStorage.setItem('products', JSON.stringify(p)); }
+    function getCart() { return JSON.parse(localStorage.getItem('cart')) || []; }
+    function saveCart(c) { localStorage.setItem('cart', JSON.stringify(c)); }
+    function getOrders() { return JSON.parse(localStorage.getItem('orders')) || []; }
+    function saveOrders(o) { localStorage.setItem('orders', JSON.stringify(o)); }
+    function getCoupons() { return JSON.parse(localStorage.getItem('coupons')) || []; }
+    function saveCoupons(c) { localStorage.setItem('coupons', JSON.stringify(c)); }
+    function getAppliedCoupon() { return JSON.parse(localStorage.getItem('appliedCoupon')); }
+    function setAppliedCoupon(c) { localStorage.setItem('appliedCoupon', JSON.stringify(c)); }
+
+    // ==================== ORDER ID GENERATOR ====================
+    function generateOrderId() {
+        const orders = getOrders();
+        const num = String(orders.length + 1).padStart(4, '0');
+        const date = new Date();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `MI-${date.getFullYear().toString().slice(-2)}${month}${day}-${num}`;
+    }
+
+    // ==================== BUSINESS HOURS ====================
+    function updateBusinessHoursDisplay() {
+        const settings = getSettings();
+        const bh = settings.businessHours || {};
+        const today = DAYS[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1];
+        const todayHours = bh[today];
+        const badge = document.getElementById('businessHoursBadge');
+        if (badge && todayHours) {
+            if (!todayHours.enabled) {
+                badge.textContent = '🔒 Closed Today';
+            } else {
+                const openTime = formatTime12h(todayHours.open);
+                const closeTime = formatTime12h(todayHours.close);
+                badge.textContent = `⏰ Today: ${openTime} – ${closeTime}`;
+            }
+        }
+    }
+
+    function formatTime12h(time24) {
+        if (!time24) return '';
+        const [h, m] = time24.split(':');
+        const hour = parseInt(h);
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+        const h12 = hour % 12 || 12;
+        return `${h12}:${m} ${ampm}`;
+    }
+
+    // ==================== OFFERS ====================
+    function renderOffers() {
+        const offersData = [
+            { emoji: '🍦', title: '10% Off First Order', desc: 'New customer discount', code: 'SWEET10' },
+            { emoji: '🎁', title: 'Buy 2 Get 1 Free', desc: 'On all stick flavors', code: 'B2G1FREE' },
+            { emoji: '👨‍👩‍👧‍👦', title: '₹20 Flat Off', desc: 'On orders above ₹150', code: 'FLAT20' }
+        ];
+
+        const grid = document.getElementById('offersGrid');
+        if (!grid) return;
+        grid.innerHTML = offersData.map(o => `
+            <div class="offer-card" onclick="copyOffer('${o.code}')">
+                <div class="offer-emoji">${o.emoji}</div>
+                <div class="offer-title">${o.title}</div>
+                <div class="offer-desc">${o.desc}</div>
+                <div class="offer-code">${o.code}</div>
+                <div style="font-size:0.75rem;color:#aaa;margin-top:0.4rem;">Tap to copy code</div>
+            </div>
+        `).join('');
+    }
+
+    function copyOffer(code) {
+        navigator.clipboard.writeText(code).catch(() => {});
+        showToast(`Coupon code <strong>${code}</strong> copied! Apply it in cart.`, 'info');
+    }
+
+    // ==================== PRODUCT LOADING ====================
+    function renderStars(rating) {
+        const full = Math.floor(rating);
+        const half = rating % 1 >= 0.5;
+        let stars = '★'.repeat(full);
+        if (half) stars += '½';
+        return stars;
+    }
+
+    function loadProducts(searchQuery = '', category = 'All') {
+        const products = getProducts();
+        const grid = document.getElementById('productsGrid');
+        const settings = getSettings();
+
+        let filtered = products;
+        if (searchQuery) filtered = filtered.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
+        if (category !== 'All') filtered = filtered.filter(p => p.category === category);
+
+        if (filtered.length === 0) {
+            grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-state-icon">🔍</div><h3>No products found</h3><p>Try adjusting your search or filter</p></div>`;
+            return;
+        }
+
+        grid.innerHTML = filtered.map(product => {
+            const cart = getCart();
+            const cartItem = cart.find(i => i.id === product.id);
+            const qty = cartItem ? cartItem.quantity : 0;
+            const disabled = !product.inStock || !settings.shopOpen;
+
+            return `
+            <div class="product-card" id="card-${product.id}">
+                <div class="product-image-wrap">
+                    <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400'">
+                    ${product.bestseller ? '<div class="bestseller-badge">⭐ Bestseller</div>' : ''}
+                    ${!product.inStock ? '<div class="sold-out-overlay">SOLD OUT</div>' : ''}
+                </div>
+                <div class="product-info">
+                    <div class="product-rating">
+                        <span class="stars">${renderStars(product.rating || 4.5)}</span>
+                        <span class="rating-count">${product.rating || '4.5'} (${product.reviews || 0})</span>
+                    </div>
+                    <h3 class="product-name">${product.name}</h3>
+                    <div class="product-price">₹${product.price}</div>
+                    <div class="card-bottom">
+                        ${qty > 0 && !disabled ? `
+                        <div class="card-qty-control">
+                            <button class="card-qty-btn" onclick="changeCardQty(${product.id}, -1)">−</button>
+                            <span class="card-qty-display">${qty}</span>
+                            <button class="card-qty-btn" onclick="changeCardQty(${product.id}, 1)">+</button>
+                        </div>
+                        ` : ''}
+                        <button class="add-to-cart-btn"
+                            onclick="addToCart(${product.id})"
+                            ${disabled ? 'disabled' : ''}>
+                            ${!settings.shopOpen ? '🔒 Closed' : !product.inStock ? 'Out of Stock' : qty > 0 ? '+ Add More' : '🛒 Add to Cart'}
+                        </button>
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    function changeCardQty(productId, delta) {
+        let cart = getCart();
+        const item = cart.find(i => i.id === productId);
+        if (item) {
+            item.quantity += delta;
+            if (item.quantity <= 0) cart = cart.filter(i => i.id !== productId);
+        }
+        saveCart(cart);
+        updateCartCount();
+        const activeCategory = document.querySelector('.filter-btn.active')?.dataset.category || 'All';
+        const searchQuery = document.getElementById('searchBar')?.value || '';
+        loadProducts(searchQuery, activeCategory);
+    }
+
+    // ==================== SHOP STATUS ====================
+    function updateShopStatus() {
+        const settings = getSettings();
+        const badge = document.getElementById('shopStatusBadge');
+        const statusText = document.getElementById('statusText');
+        const closedMessage = document.getElementById('shopClosedMessage');
+
+        if (settings.shopOpen) {
+            badge.className = 'shop-status open';
+            statusText.textContent = 'Open';
+            closedMessage.style.display = 'none';
+        } else {
+            badge.className = 'shop-status closed';
+            statusText.textContent = 'Closed';
+            closedMessage.style.display = 'flex';
+        }
+        loadProducts();
+    }
+
+    // ==================== SEARCH & FILTER ====================
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('searchBar').addEventListener('input', function() {
+            const cat = document.querySelector('.filter-btn.active')?.dataset.category || 'All';
+            loadProducts(this.value, cat);
+        });
+    });
+
+    document.addEventListener('click', e => {
+        if (e.target.classList.contains('filter-btn')) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            const q = document.getElementById('searchBar')?.value || '';
+            loadProducts(q, e.target.dataset.category);
+        }
+    });
+
+    // ==================== CART FUNCTIONS ====================
+    function addToCart(productId) {
+        const products = getProducts();
+        const product = products.find(p => p.id === productId);
+        if (!product || !product.inStock) return;
+
+        let cart = getCart();
+        const existing = cart.find(i => i.id === productId);
+        if (existing) { existing.quantity += 1; }
+        else { cart.push({ id: product.id, name: product.name, price: product.price, quantity: 1 }); }
+
+        saveCart(cart);
+        updateCartCount();
+
+        // Bounce animation
+        const cartBtn = document.getElementById('floatingCart');
+        cartBtn.classList.remove('bounce');
+        void cartBtn.offsetWidth;
+        cartBtn.classList.add('bounce');
+
+        showToast(`<strong>${product.name}</strong> added to cart!`, 'success');
+
+        // Refresh card
+        const activeCategory = document.querySelector('.filter-btn.active')?.dataset.category || 'All';
+        const searchQuery = document.getElementById('searchBar')?.value || '';
+        loadProducts(searchQuery, activeCategory);
+    }
+
+    function updateCartCount() {
+        const cart = getCart();
+        const total = cart.reduce((s, i) => s + i.quantity, 0);
+        document.getElementById('cartCount').textContent = total;
+    }
+
+    function openCart() {
+        const cart = getCart();
+        const modal = document.getElementById('cartModal');
+        const cartItemsDiv = document.getElementById('cartItems');
+        const checkoutSection = document.getElementById('checkoutSection');
+        const couponArea = document.getElementById('couponArea');
+        const settings = getSettings();
+
+        if (cart.length === 0) {
+            cartItemsDiv.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🛒</div><h3>Your cart is empty</h3><p>Add some delicious ice cream!</p></div>`;
+            checkoutSection.style.display = 'none';
+            couponArea.style.display = 'none';
+        } else {
+            cartItemsDiv.innerHTML = cart.map(item => `
+                <div class="cart-item">
+                    <div class="cart-item-info">
+                        <div class="cart-item-name">${item.name}</div>
+                        <div class="cart-item-price">₹${item.price} each</div>
+                    </div>
+                    <div class="cart-item-actions">
+                        <button class="qty-btn" onclick="updateQuantity(${item.id}, -1)">−</button>
+                        <span class="qty-display">${item.quantity}</span>
+                        <button class="qty-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
+                        <button class="remove-item" onclick="removeFromCart(${item.id})" title="Remove">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+
+            couponArea.style.display = 'block';
+
+            // Restore applied coupon display
+            const applied = getAppliedCoupon();
+            const couponAppliedMsg = document.getElementById('couponAppliedMsg');
+            if (applied) {
+                couponAppliedMsg.style.display = 'block';
+                couponAppliedMsg.textContent = `✅ Coupon "${applied.code}" applied — ${applied.type === 'percent' ? applied.value + '% off' : '₹' + applied.value + ' off'}`;
+            } else {
+                couponAppliedMsg.style.display = 'none';
+            }
+
+            checkoutSection.style.display = 'block';
+            const closedDiv = document.getElementById('shopClosedCheckout');
+            const form = document.getElementById('checkoutForm');
+            if (!settings.shopOpen) {
+                closedDiv.style.display = 'block';
+                form.style.display = 'none';
+            } else {
+                closedDiv.style.display = 'none';
+                form.style.display = 'block';
+            }
+        }
+
+        updateCartSummary();
+        modal.classList.add('active');
+    }
+
+    function closeCart() {
+        document.getElementById('cartModal').classList.remove('active');
+    }
+
+    function updateQuantity(productId, change) {
+        let cart = getCart();
+        const item = cart.find(i => i.id === productId);
+        if (item) {
+            item.quantity += change;
+            if (item.quantity <= 0) cart = cart.filter(i => i.id !== productId);
+        }
+        saveCart(cart);
+        updateCartCount();
+
+        const activeCategory = document.querySelector('.filter-btn.active')?.dataset.category || 'All';
+        const searchQuery = document.getElementById('searchBar')?.value || '';
+        loadProducts(searchQuery, activeCategory);
+
+        openCart();
+    }
+
+    function removeFromCart(productId) {
+        let cart = getCart().filter(i => i.id !== productId);
+        saveCart(cart);
+        updateCartCount();
+
+        const activeCategory = document.querySelector('.filter-btn.active')?.dataset.category || 'All';
+        const searchQuery = document.getElementById('searchBar')?.value || '';
+        loadProducts(searchQuery, activeCategory);
+
+        openCart();
+        showToast('Item removed from cart', 'warning');
+    }
+
+    function updateCartSummary() {
+        const cart = getCart();
+        const settings = getSettings();
+        const summaryDiv = document.getElementById('cartSummary');
+        const applied = getAppliedCoupon();
+
+        if (cart.length === 0) { summaryDiv.innerHTML = ''; return; }
+
+        const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+        let discount = 0;
+
+        if (applied) {
+            if (subtotal >= (applied.minOrder || 0)) {
+                if (applied.type === 'percent') discount = Math.floor(subtotal * applied.value / 100);
+                else discount = Math.min(applied.value, subtotal);
+            }
+        }
+
+        const afterDiscount = subtotal - discount;
+        const deliveryCharge = afterDiscount < settings.minOrderAmount ? settings.deliveryCharge : 0;
+        const total = afterDiscount + deliveryCharge;
+
+        summaryDiv.innerHTML = `
+            <div class="summary-row"><span>Subtotal:</span><span>₹${subtotal}</span></div>
+            ${discount > 0 ? `<div class="summary-row discount"><span>🎁 Discount (${applied.code}):</span><span>−₹${discount}</span></div>` : ''}
+            ${deliveryCharge > 0 ? `<div class="summary-row"><span>🚚 Delivery Charge:</span><span>₹${deliveryCharge}</span></div>` : ''}
+            <div class="summary-row total"><span>Total:</span><span>₹${total}</span></div>
+            ${deliveryCharge > 0 ? `<div class="warning-text">⚠️ Add ₹${settings.minOrderAmount - afterDiscount} more for free delivery!</div>` : '<div style="color:var(--success);font-size:0.85rem;margin-top:0.5rem;font-weight:600;">🎉 Free delivery on this order!</div>'}
+        `;
+    }
+
+    // ==================== COUPON SYSTEM ====================
+    function applyCoupon() {
+        const code = document.getElementById('couponInput').value.trim().toUpperCase();
+        if (!code) { showToast('Please enter a coupon code', 'warning'); return; }
+
+        const coupons = getCoupons();
+        const coupon = coupons.find(c => c.code === code && c.active);
+
+        if (!coupon) {
+            showToast('Invalid or expired coupon code!', 'error');
+            return;
+        }
+
+        const cart = getCart();
+        const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+
+        if (subtotal < coupon.minOrder) {
+            showToast(`Minimum order ₹${coupon.minOrder} required for this coupon`, 'warning');
+            return;
+        }
+
+        setAppliedCoupon(coupon);
+        document.getElementById('couponInput').value = '';
+
+        const discountText = coupon.type === 'percent' ? `${coupon.value}% off` : `₹${coupon.value} off`;
+        const msgDiv = document.getElementById('couponAppliedMsg');
+        msgDiv.style.display = 'block';
+        msgDiv.textContent = `✅ Coupon "${code}" applied — ${discountText}`;
+
+        updateCartSummary();
+        showToast(`Coupon <strong>${code}</strong> applied successfully!`, 'success');
+    }
+
+    // ==================== CHECKOUT ====================
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const cart = getCart();
+            const settings = getSettings();
+
+            if (!settings.shopOpen) { showToast('Shop is closed. Cannot place order.', 'error'); return; }
+
+            const name = document.getElementById('customerName').value;
+            const mobile = document.getElementById('customerMobile').value;
+            const address = document.getElementById('customerAddress').value;
+            const applied = getAppliedCoupon();
+
+            const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+            let discount = 0;
+            if (applied && subtotal >= (applied.minOrder || 0)) {
+                if (applied.type === 'percent') discount = Math.floor(subtotal * applied.value / 100);
+                else discount = Math.min(applied.value, subtotal);
+            }
+            const afterDiscount = subtotal - discount;
+            const deliveryCharge = afterDiscount < settings.minOrderAmount ? settings.deliveryCharge : 0;
+            const total = afterDiscount + deliveryCharge;
+            const orderId = generateOrderId();
+
+            const order = {
+                id: orderId,
+                timestamp: new Date().toLocaleString('hi-IN'),
+                customer: { name, mobile, address },
+                items: cart,
+                subtotal,
+                discount,
+                coupon: applied ? applied.code : null,
+                deliveryCharge,
+                total,
+                status: 'pending'
+            };
+
+            const orders = getOrders();
+            orders.push(order);
+            saveOrders(orders);
+
+            // WhatsApp message
+            let msg = `🍦 *New Order - Murlidhar Icecream*\n`;
+            msg += `📋 *Order ID:* ${orderId}\n\n`;
+            msg += `*Items:*\n`;
+            cart.forEach(i => { msg += `• ${i.name} × ${i.quantity} = ₹${i.price * i.quantity}\n`; });
+            msg += `\n💰 *Subtotal:* ₹${subtotal}\n`;
+            if (discount > 0) msg += `🎁 *Discount (${applied.code}):* −₹${discount}\n`;
+            if (deliveryCharge > 0) msg += `🚚 *Delivery:* ₹${deliveryCharge}\n`;
+            msg += `💵 *Total: ₹${total}*\n\n`;
+            msg += `👤 *Customer:*\nName: ${name}\nMobile: ${mobile}\nAddress: ${address}`;
+
+            saveCart([]);
+            setAppliedCoupon(null);
+            updateCartCount();
+            closeCart();
+
+            const activeCategory = document.querySelector('.filter-btn.active')?.dataset.category || 'All';
+            const searchQuery = document.getElementById('searchBar')?.value || '';
+            loadProducts(searchQuery, activeCategory);
+
+            window.open(`https://wa.me/918218377572?text=${encodeURIComponent(msg)}`, '_blank');
+            showToast(`Order <strong>${orderId}</strong> placed! Opening WhatsApp...`, 'success', 5000);
+        });
+    });
+
+    // ==================== ADMIN LOGIN ====================
+    function openAdminLogin() {
+        document.getElementById('adminLoginModal').classList.add('active');
+    }
+
+    function closeAdminLogin() {
+        document.getElementById('adminLoginModal').classList.remove('active');
+        document.getElementById('adminLoginForm').reset();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const pw = document.getElementById('adminPassword').value;
+            const settings = getSettings();
+            if (pw === settings.adminPassword) {
+                closeAdminLogin();
+                document.getElementById('customerSite').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                loadAdminData();
+            } else {
+                showToast('Incorrect password!', 'error');
+                document.getElementById('adminPassword').value = '';
+            }
+        });
+    });
+
+    function logoutAdmin() {
+        document.getElementById('adminPanel').style.display = 'none';
+        document.getElementById('customerSite').style.display = 'block';
+        showToast('Logged out successfully', 'info');
+    }
+
+    // ==================== ADMIN TABS ====================
+    function showAdminTab(tabName, btn) {
+        document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.admin-content').forEach(c => c.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        document.getElementById(`${tabName}Tab`).classList.add('active');
+        if (tabName === 'orders') loadOrderHistory();
+        else if (tabName === 'settings') loadSettings();
+        else if (tabName === 'coupons') loadCoupons();
+    }
+
+    function loadAdminData() {
+        loadAdminProducts();
+        loadOrderHistory();
+        loadSettings();
+        loadCoupons();
+    }
+
+    // ==================== ADMIN PRODUCTS ====================
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('addProductForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const products = getProducts();
+            const newProduct = {
+                id: Date.now(),
+                name: document.getElementById('productName').value,
+                price: parseFloat(document.getElementById('productPrice').value),
+                category: document.getElementById('productCategory').value,
+                image: document.getElementById('productImage').value,
+                rating: parseFloat(document.getElementById('productRating').value) || 4.5,
+                reviews: 0,
+                inStock: true,
+                bestseller: false
+            };
+            products.push(newProduct);
+            saveProducts(products);
+            loadAdminProducts();
+            loadProducts();
+            this.reset();
+            showToast('Product added successfully!', 'success');
+        });
+    });
+
+    function loadAdminProducts() {
+        const products = getProducts();
+        const list = document.getElementById('adminProductList');
+        if (products.length === 0) {
+            list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📦</div><h3>No products yet</h3></div>`;
+            return;
+        }
+        list.innerHTML = products.map(p => `
+            <div class="product-item">
+                <div class="product-item-info">
+                    <strong>${p.name}</strong> — ₹${p.price} — ${p.category}<br>
+                    <span style="font-size:0.85rem;color:#666;">
+                        ${p.inStock ? '✅ In Stock' : '❌ Out of Stock'}
+                        ${p.bestseller ? ' | ⭐ Bestseller' : ''}
+                        | ⭐ ${p.rating || 4.5} (${p.reviews || 0} reviews)
+                    </span>
+                </div>
+                <div class="product-item-actions">
+                    <button class="btn-small ${p.inStock ? 'btn-success' : 'btn-danger'}" onclick="toggleStock(${p.id})">
+                        ${p.inStock ? '❌ Out of Stock' : '✅ In Stock'}
+                    </button>
+                    <button class="btn-small btn-warning" onclick="toggleBestseller(${p.id})">
+                        ${p.bestseller ? '★ Remove Star' : '⭐ Bestseller'}
+                    </button>
+                    <button class="btn-small btn-danger" onclick="deleteProduct(${p.id})">🗑️ Delete</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function toggleStock(id) {
+        const products = getProducts();
+        const p = products.find(x => x.id === id);
+        if (p) { p.inStock = !p.inStock; saveProducts(products); loadAdminProducts(); loadProducts(); showToast(`${p.name} marked as ${p.inStock ? 'In Stock' : 'Out of Stock'}`, 'info'); }
+    }
+
+    function toggleBestseller(id) {
+        const products = getProducts();
+        const p = products.find(x => x.id === id);
+        if (p) { p.bestseller = !p.bestseller; saveProducts(products); loadAdminProducts(); loadProducts(); showToast(`Bestseller ${p.bestseller ? 'added' : 'removed'}`, 'info'); }
+    }
+
+    function deleteProduct(id) {
+        if (!confirm('Delete this product? This cannot be undone.')) return;
+        let products = getProducts().filter(x => x.id !== id);
+        saveProducts(products);
+        loadAdminProducts();
+        loadProducts();
+        showToast('Product deleted', 'warning');
+    }
+
+    // ==================== ORDER HISTORY ====================
+    function loadOrderHistory() {
+        const allOrders = getOrders();
+        const list = document.getElementById('ordersList');
+        const searchVal = document.getElementById('orderSearch')?.value.toLowerCase() || '';
+        const statusFilter = document.getElementById('orderStatusFilter')?.value || 'all';
+
+        let orders = [...allOrders].reverse();
+
+        if (searchVal) {
+            orders = orders.filter(o =>
+                o.customer.name.toLowerCase().includes(searchVal) ||
+                o.customer.mobile.includes(searchVal) ||
+                String(o.id).toLowerCase().includes(searchVal)
+            );
+        }
+
+        if (statusFilter !== 'all') {
+            orders = orders.filter(o => o.status === statusFilter);
+        }
+
+        // Stats
+        const totalRev = allOrders.reduce((s, o) => s + (o.total || 0), 0);
+        const countEl = document.getElementById('totalOrdersCount');
+        const revEl = document.getElementById('totalRevenue');
+        if (countEl) countEl.textContent = allOrders.length;
+        if (revEl) revEl.textContent = `₹${totalRev}`;
+
+        if (orders.length === 0) {
+            list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📦</div><h3>No orders found</h3></div>`;
+            return;
+        }
+
+        list.innerHTML = orders.map(order => `
+            <div class="order-item ${order.status}">
+                <div class="order-header">
+                    <div>
+                        <div class="order-id">Order ${order.id}</div>
+                        <div style="font-size:0.85rem;color:#666;margin-top:0.2rem;">${order.timestamp}</div>
+                    </div>
+                    <span class="order-status ${order.status}">${order.status.toUpperCase()}</span>
+                </div>
+                <div style="margin-bottom:0.8rem;font-size:0.92rem;">
+                    <strong>👤</strong> ${order.customer.name} &nbsp;|&nbsp;
+                    <strong>📱</strong> ${order.customer.mobile}<br>
+                    <strong>🏠</strong> ${order.customer.address}
+                </div>
+                <div style="margin-bottom:0.8rem;font-size:0.9rem;">
+                    ${order.items.map(i => `<div>• ${i.name} × ${i.quantity} = ₹${i.price * i.quantity}</div>`).join('')}
+                </div>
+                <div style="font-size:0.9rem;">
+                    Subtotal: ₹${order.subtotal}
+                    ${order.discount > 0 ? ` | 🎁 Discount: −₹${order.discount} (${order.coupon})` : ''}
+                    ${order.deliveryCharge > 0 ? ` | Delivery: ₹${order.deliveryCharge}` : ''}
+                    | <strong style="color:var(--primary-pink);font-size:1rem;">Total: ₹${order.total}</strong>
+                </div>
+                ${order.status === 'pending' ? `<button class="btn btn-success" style="margin-top:0.8rem;" onclick="markDelivered('${order.id}')">✅ Mark as Delivered</button>` : ''}
+            </div>
+        `).join('');
+    }
+
+    function markDelivered(orderId) {
+        const orders = getOrders();
+        const o = orders.find(x => x.id === orderId);
+        if (o) { o.status = 'delivered'; saveOrders(orders); loadOrderHistory(); showToast('Order marked as delivered!', 'success'); }
+    }
+
+    // ==================== COUPON ADMIN ====================
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('addCouponForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const coupons = getCoupons();
+            const code = document.getElementById('couponCode').value.trim().toUpperCase();
+            if (coupons.find(c => c.code === code)) { showToast('Coupon code already exists!', 'error'); return; }
+            coupons.push({
+                code,
+                type: document.getElementById('couponType').value,
+                value: parseFloat(document.getElementById('couponValue').value),
+                minOrder: parseFloat(document.getElementById('couponMinOrder').value) || 0,
+                active: true
             });
+            saveCoupons(coupons);
+            loadCoupons();
+            this.reset();
+            showToast(`Coupon ${code} created!`, 'success');
+        });
+    });
+
+    function loadCoupons() {
+        const coupons = getCoupons();
+        const list = document.getElementById('couponsList');
+        if (!list) return;
+        if (coupons.length === 0) {
+            list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🎟️</div><h3>No coupons yet</h3></div>`;
+            return;
+        }
+        list.innerHTML = coupons.map((c, idx) => `
+            <div class="coupon-admin-item">
+                <div>
+                    <span class="coupon-code-display">${c.code}</span>
+                    <span style="margin-left:0.8rem;font-size:0.88rem;color:#666;">
+                        ${c.type === 'percent' ? c.value + '% off' : '₹' + c.value + ' off'}
+                        ${c.minOrder > 0 ? ` | Min: ₹${c.minOrder}` : ''}
+                        | ${c.active ? '<span style="color:var(--success);">Active</span>' : '<span style="color:var(--danger);">Inactive</span>'}
+                    </span>
+                </div>
+                <div style="display:flex;gap:0.5rem;">
+                    <button class="btn-small btn-warning" onclick="toggleCoupon(${idx})">${c.active ? 'Disable' : 'Enable'}</button>
+                    <button class="btn-small btn-danger" onclick="deleteCoupon(${idx})">🗑️</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function toggleCoupon(idx) {
+        const coupons = getCoupons();
+        coupons[idx].active = !coupons[idx].active;
+        saveCoupons(coupons);
+        loadCoupons();
+        showToast(`Coupon ${coupons[idx].active ? 'enabled' : 'disabled'}`, 'info');
+    }
+
+    function deleteCoupon(idx) {
+        if (!confirm('Delete this coupon?')) return;
+        const coupons = getCoupons();
+        coupons.splice(idx, 1);
+        saveCoupons(coupons);
+        loadCoupons();
+        showToast('Coupon deleted', 'warning');
+    }
+
+    // ==================== SETTINGS ====================
+    function loadSettings() {
+        const s = getSettings();
+        document.getElementById('shopOpenToggle').checked = s.shopOpen;
+        document.getElementById('shopToggleLabel').textContent = s.shopOpen ? 'Shop is Open' : 'Shop is Closed';
+        document.getElementById('minOrderAmount').value = s.minOrderAmount;
+        document.getElementById('deliveryCharge').value = s.deliveryCharge;
+        renderHoursGrid(s.businessHours || {});
+    }
+
+    function toggleShopStatus() {
+        const s = getSettings();
+        s.shopOpen = document.getElementById('shopOpenToggle').checked;
+        document.getElementById('shopToggleLabel').textContent = s.shopOpen ? 'Shop is Open' : 'Shop is Closed';
+        saveSettings(s);
+        updateShopStatus();
+        showToast(`Shop is now ${s.shopOpen ? 'Open' : 'Closed'}`, s.shopOpen ? 'success' : 'warning');
+    }
+
+    function saveOrderSettings() {
+        const s = getSettings();
+        s.minOrderAmount = parseFloat(document.getElementById('minOrderAmount').value) || 0;
+        s.deliveryCharge = parseFloat(document.getElementById('deliveryCharge').value) || 0;
+        saveSettings(s);
+        showToast('Order settings saved!', 'success');
+    }
+
+    // Business Hours Admin Grid
+    function renderHoursGrid(hours) {
+        const grid = document.getElementById('hoursGrid');
+        if (!grid) return;
+        grid.innerHTML = DAYS.map(day => {
+            const h = hours[day] || { open: '10:00', close: '22:00', enabled: true };
+            return `
+            <div class="hours-row">
+                <span class="hours-day">${day.slice(0, 3)}</span>
+                <label class="toggle-switch" style="width:44px;height:24px;">
+                    <input type="checkbox" id="hours_enabled_${day}" ${h.enabled ? 'checked' : ''}>
+                    <span class="slider"></span>
+                </label>
+                <input type="time" class="hours-input" id="hours_open_${day}" value="${h.open}">
+                <span style="font-size:0.85rem;">–</span>
+                <input type="time" class="hours-input" id="hours_close_${day}" value="${h.close}">
+            </div>`;
+        }).join('');
+    }
+
+    function saveBusinessHours() {
+        const s = getSettings();
+        const bh = {};
+        DAYS.forEach(day => {
+            bh[day] = {
+                enabled: document.getElementById(`hours_enabled_${day}`)?.checked || false,
+                open: document.getElementById(`hours_open_${day}`)?.value || '10:00',
+                close: document.getElementById(`hours_close_${day}`)?.value || '22:00'
+            };
+        });
+        s.businessHours = bh;
+        saveSettings(s);
+        updateBusinessHoursDisplay();
+        showToast('Business hours saved!', 'success');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const newPw = document.getElementById('newPassword').value;
+            if (newPw.length < 6) { showToast('Password must be at least 6 characters', 'warning'); return; }
+            const s = getSettings();
+            s.adminPassword = newPw;
+            saveSettings(s);
+            this.reset();
+            showToast('Password changed successfully!', 'success');
+        });
+    });
+
+    // ==================== INIT ====================
+    initializeApp();
     </script>
 </body>
 </html>
